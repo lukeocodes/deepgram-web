@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v1
       - name: Configure dynamic environment variables for production
         if: ${{ env.IS_PRODUCTION == 'true' }}
         run: |
@@ -34,5 +36,4 @@ jobs:
           echo "DEPLOY_MESSAGE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ env.DEPLOY_PREFIX }}-deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
           echo "ENVIRONMENT_DESC=Deploy preview for ${{ env.DEPLOY_PREFIX }} site. Last deployment: ${{ github.event.head_commit.message }}" >> $GITHUB_ENV
-      - run: echo $URL
       - run: env
