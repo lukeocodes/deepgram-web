@@ -3,7 +3,17 @@ name: "Blog: CI/CD"
 on:
   workflow_dispatch:
   push:
+    branches: [main]
+    # paths: 
+    # - 'blog/**'
+    # - 'content/**'
+    # - 'shared/**'
   pull_request:
+    branches: [main]
+    # paths: 
+    # - 'blog/**'
+    # - 'content/**'
+    # - 'shared/**'
 
 jobs:
   blog:
@@ -14,6 +24,7 @@ jobs:
       STAGING_DOMAIN: sweet-pie-c52a63-blog.netlify.app
       BUILD_PATH: ./blog
       IS_PRODUCTION: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+      IS_STAGING: ${{ github.ref != 'refs/heads/main' && github.event_name == 'pull_request' }}
       DEPLOY_PREFIX: blog
     steps:
       - name: Check out repository
@@ -21,14 +32,17 @@ jobs:
       - name: Configure dynamic environment variables for production
         if: ${{ env.IS_PRODUCTION == 'true' }}
         run: |
-          echo "URL=https://$(echo $PRODUCTION_DOMAIN)" >> $GITHUB_ENV
-          echo "ENVIRONMENT_NAME=$(echo $DEPLOY_PREFIX)-production" >> $GITHUB_ENV
+          echo "URL=https://${{ env.PRODUCTION_DOMAIN }}" >> $GITHUB_ENV
           echo "BUILD_ALIAS=" >> $GITHUB_ENV
+          echo "DEPLOY_MESSAGE=${{ github.event.head_commit.message }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT_NAME=${{ env.DEPLOY_PREFIX }}-production" >> $GITHUB_ENV
+          echo "ENVIRONMENT_DESC=Production deployment for ${{ env.DEPLOY_PREFIX }} site. Last deployment: ${{ github.event.head_commit.message }}" >> $GITHUB_ENV
       - name: Configure dynamic environment variables for staging
-        if: ${{ env.IS_PRODUCTION != 'true' }}
+        if: ${{ env.IS_STAGING == 'true' }}
         run: |
-          echo "URL=https://$(echo $STAGING_DOMAIN)" >> $GITHUB_ENV
-          echo "ENVIRONMENT_NAME=$(echo $DEPLOY_PREFIX)-deploy-preview" >> $GITHUB_ENV
-          echo "BUILD_ALIAS=deploy-preview" >> $GITHUB_ENV
-      - run: echo $URL
+          echo "URL=https://${{ env.STAGING_DOMAIN }}" >> $GITHUB_ENV
+          echo "BUILD_ALIAS=deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "DEPLOY_MESSAGE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT_NAME=${{ env.DEPLOY_PREFIX }}-deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT_DESC=Deploy preview for ${{ env.DEPLOY_PREFIX }} site. Pull request: #${{ github.event.number }}" >> $GITHUB_ENV
       - run: env
