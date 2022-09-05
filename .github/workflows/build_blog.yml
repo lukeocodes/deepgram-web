@@ -45,4 +45,5 @@ jobs:
           echo "DEPLOY_MESSAGE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ env.DEPLOY_PREFIX }}-deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
           echo "ENVIRONMENT_DESC=Deploy preview for ${{ env.DEPLOY_PREFIX }} site. Pull request: #${{ github.event.number }}" >> $GITHUB_ENV
-      - run: env
+      - name: test env title
+        run: env
