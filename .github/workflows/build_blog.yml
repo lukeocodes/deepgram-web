@@ -44,5 +44,5 @@ jobs:
           echo "BUILD_ALIAS=deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
           echo "DEPLOY_MESSAGE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "ENVIRONMENT_NAME=${{ env.DEPLOY_PREFIX }}-deploy-preview-${{ github.event.number }}" >> $GITHUB_ENV
-          echo "ENVIRONMENT_DESC=Deploy preview for ${{ env.DEPLOY_PREFIX }} site. Last deployment: ${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "ENVIRONMENT_DESC=Deploy preview for ${{ env.DEPLOY_PREFIX }} site. Pull request: #${{ github.event.number }}" >> $GITHUB_ENV
       - run: env
