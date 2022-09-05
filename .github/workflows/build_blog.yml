@@ -29,8 +29,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Dump context
-        uses: crazy-max/ghaction-dump-context@v1
       - name: Configure dynamic environment variables for production
         if: ${{ env.IS_PRODUCTION == 'true' }}
         run: |
